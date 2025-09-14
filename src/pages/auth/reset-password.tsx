@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { resetPasswordBegin, resetPasswordVerify, resetPasswordCommit } from '../../services/auth-service';
-import { ArrowLeft, CheckCircle, Mail, Eye, EyeOff } from 'lucide-react';
+import { ArrowLeft, CheckCircle, Mail } from 'lucide-react';
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -25,6 +25,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import PasswordStrength from '@/components/ui/password-strength';
 
 // Define the form schemas with Zod
 const emailFormSchema = z.object({
@@ -36,7 +37,6 @@ const codeFormSchema = z.object({
 });
 
 const passwordFormSchema = z.object({
-  token: z.string(),
   newPassword: z.string().min(6, { message: "Password must be at least 6 characters" }),
   confirmPassword: z.string().min(6, { message: "Password must be at least 6 characters" }),
 }).refine((data) => data.newPassword === data.confirmPassword, {
@@ -51,41 +51,14 @@ type PasswordFormValues = z.infer<typeof passwordFormSchema>;
 
 const ResetPassword = () => {
   const [email, setEmail] = useState("");
+  const [token, setToken] = useState("");
   const [isLoadingEmail, setIsLoadingEmail] = useState(false);
   const [isLoadingCode, setIsLoadingCode] = useState(false);
   const [isLoadingReset, setIsLoadingReset] = useState(false);
   const [showCodeVerification, setShowCodeVerification] = useState(false);
   const [showPasswordReset, setShowPasswordReset] = useState(false);
   const [resetComplete, setResetComplete] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
-
-  // Initialize email form with react-hook-form and zod validation
-  const emailForm = useForm<EmailFormValues>({
-    resolver: zodResolver(emailFormSchema),
-    defaultValues: {
-      email: "",
-    },
-  });
-
-  // Initialize code form with react-hook-form and zod validation
-  const codeForm = useForm<CodeFormValues>({
-    resolver: zodResolver(codeFormSchema),
-    defaultValues: {
-      code: "",
-    },
-  });
-
-  // Initialize password form with react-hook-form and zod validation
-  const passwordForm = useForm<PasswordFormValues>({
-    resolver: zodResolver(passwordFormSchema),
-    defaultValues: {
-      token: "",
-      newPassword: "",
-      confirmPassword: "",
-    },
-  });
 
   const onSubmitEmail = async (data: EmailFormValues) => {
     setIsLoadingEmail(true);
@@ -117,10 +90,7 @@ const ResetPassword = () => {
         throw new Error(response.message || 'Failed to verify code');
       }
 
-      const token = response.data?.token || '';
-      
-      // Set the token in the password form
-      passwordForm.setValue('token', token);
+      setToken(response.data?.token || '');
       
       setShowCodeVerification(false);
       setShowPasswordReset(true);
@@ -136,8 +106,7 @@ const ResetPassword = () => {
     setIsLoadingReset(true);
 
     try {
-      // Use the token from the form data
-      const response = await resetPasswordCommit(data.token, data.newPassword);
+      const response = await resetPasswordCommit(token, data.newPassword);
 
       if (!response.success) {
         throw new Error(response.message || 'Failed to reset password');
@@ -154,11 +123,19 @@ const ResetPassword = () => {
 
   const handleTryAgain = () => {
     setShowCodeVerification(false);
-    emailForm.reset();
+    setEmail("");
+    setToken("");
   };
 
-  // Initial step: Enter email
-  if (!showCodeVerification && !showPasswordReset && !resetComplete) {
+  // Email Form Component
+  const EmailForm = () => {
+    const emailForm = useForm<EmailFormValues>({
+      resolver: zodResolver(emailFormSchema),
+      defaultValues: {
+        email: "",
+      },
+    });
+
     return (
       <div className="flex min-h-screen w-full items-center justify-center p-6 md:p-10 bg-background">
         <Card className="w-full max-w-md">
@@ -194,7 +171,7 @@ const ResetPassword = () => {
                 <Button
                   type="submit"
                   disabled={isLoadingEmail}
-                  className="w-full text-white"
+                  className="w-full font-semibold"
                 >
                   {isLoadingEmail ? 'Sending...' : 'Send Verification Code'}
                 </Button>
@@ -206,17 +183,24 @@ const ResetPassword = () => {
             <div className="text-sm text-muted-foreground text-center">
               <Link to="/auth/login" className="text-primary hover:underline flex items-center justify-center gap-2">
                 <ArrowLeft className="w-4 h-4" />
-                Back to login
+                Back to Login
               </Link>
             </div>
           </CardFooter>
         </Card>
       </div>
     );
-  }
+  };
 
-  // Second step: Enter verification code
-  if (showCodeVerification && !resetComplete) {
+  // Code Form Component
+  const CodeForm = () => {
+    const codeForm = useForm<CodeFormValues>({
+      resolver: zodResolver(codeFormSchema),
+      defaultValues: {
+        code: "",
+      },
+    });
+
     return (
       <div className="flex min-h-screen w-full items-center justify-center p-6 md:p-10 bg-background">
         <Card className="w-full max-w-md">
@@ -232,7 +216,7 @@ const ResetPassword = () => {
               <CardContent className="space-y-4">
                 <div className="text-center mb-4">
                   <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-4">
-                    <Mail className="w-8 h-8 text-primary" />
+                    <Mail className="w-8 h-8 text-green-600" />
                   </div>
                   <p className="text-sm text-muted-foreground mb-4">
                     Check your email <strong>{email}</strong> for the verification code
@@ -260,7 +244,7 @@ const ResetPassword = () => {
                 <Button
                   type="submit"
                   disabled={isLoadingCode}
-                  className="w-full text-white"
+                  className="w-full font-semibold"
                 >
                   {isLoadingCode ? 'Verifying...' : 'Verify Code'}
                 </Button>
@@ -283,10 +267,21 @@ const ResetPassword = () => {
         </Card>
       </div>
     );
-  }
+  };
 
-  // Third step: Set new password
-  if (showPasswordReset && !resetComplete) {
+  // Password Form Component
+  const PasswordForm = () => {
+    //const [showPassword, setShowPassword] = useState(false);
+    //const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    
+    const passwordForm = useForm<PasswordFormValues>({
+      resolver: zodResolver(passwordFormSchema),
+      defaultValues: {
+        newPassword: "",
+        confirmPassword: "",
+      },
+    });
+
     return (
       <div className="flex min-h-screen w-full items-center justify-center p-6 md:p-10 bg-background">
         <Card className="w-full max-w-md">
@@ -297,93 +292,90 @@ const ResetPassword = () => {
             </CardDescription>
           </CardHeader>
           
-          <Form {...passwordForm}>
-  <form onSubmit={passwordForm.handleSubmit(onSubmitNewPassword)} className="space-y-5">
-    <CardContent className="space-y-4">
-      
-      {/* Hidden token */}
-      <FormField
-        control={passwordForm.control}
-        name="token"
-        render={({ field }) => (
-          <input type="hidden" {...field} />
-        )}
-      />
-
-      {/* New password */}
-      <FormField
-        control={passwordForm.control}
-        name="newPassword"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>New Password</FormLabel>
-            <div className="relative">
-              <FormControl>
-                <Input
-                  placeholder="Enter new password"
-                  type={showPassword ? "text" : "password"}
-                  {...field}
+          <CardContent>
+            <Form {...passwordForm}>
+              <form onSubmit={passwordForm.handleSubmit(onSubmitNewPassword)} className="space-y-5">
+                
+                {/* New password */}
+                <FormField
+                  control={passwordForm.control}
+                  name="newPassword"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>New Password</FormLabel>
+                      <div className="relative">
+                        <FormControl>
+                          <Input
+                            placeholder="Enter new password"
+                            type={"password"}
+                            {...field}
+                          />
+                        </FormControl>
+                        {/* <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                          tabIndex={-1}
+                        >
+                          {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                        </button> */}
+                      </div>
+                      <div className="mt-2">
+                        <PasswordStrength password={field.value} />
+                      </div>
+                      <div className="mt-1 text-xs text-muted-foreground">
+                        Password must contain at least 8 characters, including uppercase, lowercase, number, and special character.
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </FormControl>
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                tabIndex={-1}
-              >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
-            </div>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
 
-      {/* Confirm password */}
-      <FormField
-        control={passwordForm.control}
-        name="confirmPassword"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Confirm Password</FormLabel>
-            <div className="relative">
-              <FormControl>
-                <Input
-                  placeholder="Confirm new password"
-                  type={showConfirmPassword ? "text" : "password"}
-                  {...field}
+                {/* Confirm password */}
+                <FormField
+                  control={passwordForm.control}
+                  name="confirmPassword"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Confirm Password</FormLabel>
+                      <div className="relative">
+                        <FormControl>
+                          <Input
+                            placeholder="Confirm new password"
+                            type={"password"}
+                            {...field}
+                          />
+                        </FormControl>
+                        {/* <button
+                          type="button"
+                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                          tabIndex={-1}
+                        >
+                          {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                        </button> */}
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </FormControl>
-              <button
-                type="button"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                tabIndex={-1}
-              >
-                {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
-            </div>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
 
-      <Button
-        type="submit"
-        disabled={isLoadingReset}
-        className="w-full text-white"
-      >
-        {isLoadingReset ? 'Resetting Password...' : 'Reset Password'}
-      </Button>
-    </CardContent>
-  </form>
-</Form>
+                <Button
+                  type="submit"
+                  disabled={isLoadingReset}
+                  className="w-full font-semibold"
+                >
+                  {isLoadingReset ? 'Resetting Password...' : 'Reset Password'}
+                </Button>
+              </form>
+            </Form>
+          </CardContent>
         </Card>
       </div>
     );
-  }
+  };
 
-  // Final step: Reset successful
+  // Render the appropriate step
   if (resetComplete) {
     return (
       <div className="flex min-h-screen w-full items-center justify-center p-6 md:p-10 bg-background">
@@ -397,21 +389,21 @@ const ResetPassword = () => {
           
           <CardContent className="space-y-4">
             <div className="text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-4">
                 <CheckCircle className="w-8 h-8 text-green-600" />
               </div>
               <p className="text-sm text-muted-foreground">
-                Your password has been successfully reset. You can now sign in with your new password.
+                Your password has been successfully reset. You can now Login with your new password.
               </p>
             </div>
           </CardContent>
           
           <CardFooter className="flex flex-col space-y-2">
             <Button 
-              className="w-full text-white" 
+              className="w-full font-semibold" 
               onClick={() => navigate('/auth/login')}
             >
-              Go to Sign In
+              Go to Login
             </Button>
           </CardFooter>
         </Card>
@@ -419,8 +411,15 @@ const ResetPassword = () => {
     );
   }
 
-  // This should never happen but adding a fallback
-  return null;
+  if (showPasswordReset) {
+    return <PasswordForm />;
+  }
+
+  if (showCodeVerification) {
+    return <CodeForm />;
+  }
+
+  return <EmailForm />;
 };
 
 export default ResetPassword;

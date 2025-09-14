@@ -28,11 +28,10 @@ import { Input } from "@/components/ui/input";
 
 // Define the form schema with Zod
 const formSchema = z.object({
-  email: z.string().email({ message: "Please enter a valid email address" }),
+  email: z.string().min(1, {message: "Username or Email is required"}),
   password: z.string().min(6, {
     message: "Password must be at least 6 characters",
   }),
-  rememberMe: z.boolean().optional(),
 });
 
 // Define the form values type
@@ -63,7 +62,6 @@ const Login = () => {
     defaultValues: {
       email: "",
       password: "",
-      rememberMe: false,
     },
   });
 
@@ -111,9 +109,9 @@ const Login = () => {
                       <FormLabel>Email</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="m@example.com"
-                          type="email"
-                          autoComplete="email"
+                          placeholder="Enter username or email"
+                          type="text"
+                          autoComplete="username"
                           {...field}
                         />
                       </FormControl>
@@ -138,7 +136,7 @@ const Login = () => {
                       </div>
                       <FormControl>
                         <Input
-                          placeholder="••••••••"
+                          placeholder="Enter Password"
                           type="password"
                           autoComplete="current-password"
                           {...field}
@@ -152,9 +150,9 @@ const Login = () => {
                 <Button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full text-white"
+                  className="w-full font-semibold"
                 >
-                  {isLoading ? 'Signing in...' : 'Sign in'}
+                  {isLoading ? 'Logging in...' : 'Login'}
                 </Button>
 
                 <div className="text-center mt-4">

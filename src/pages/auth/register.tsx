@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
 import { showToast } from "@/components/ui/toast-config";
+import PasswordStrength from "@/components/ui/password-strength";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -35,11 +36,14 @@ const formSchema = z.object({
   }),
   email: z.string().email({ message: "Please enter a valid email address" }),
   phone: z.string().optional(),
-  password: z.string().min(6, {
-    message: "Password must be at least 6 characters",
-  }),
-  confirmPassword: z.string().min(6, {
-    message: "Password must be at least 6 characters",
+  password: z.string()
+    .min(8, { message: "Password must be at least 8 characters" })
+    .regex(/[A-Z]/, { message: "Password must contain at least one uppercase letter" })
+    .regex(/[a-z]/, { message: "Password must contain at least one lowercase letter" })
+    .regex(/[0-9]/, { message: "Password must contain at least one number" })
+    .regex(/[^A-Za-z0-9]/, { message: "Password must contain at least one special character" }),
+  confirmPassword: z.string().min(8, {
+    message: "Password must be at least 8 characters",
   }),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords do not match",
@@ -233,6 +237,12 @@ const Register = () => {
                           {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                         </button>
                       </div>
+                      <div className="mt-2">
+                        <PasswordStrength password={field.value} />
+                      </div>
+                      <div className="mt-1 text-xs text-muted-foreground">
+                        Password must contain at least 8 characters, including uppercase, lowercase, number, and special character.
+                      </div>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -269,7 +279,7 @@ const Register = () => {
                 <Button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full text-white"
+                  className="w-full font-semibold"
                 >
                   {isLoading ? 'Creating Account...' : 'Create Account'}
                 </Button>
@@ -278,7 +288,7 @@ const Register = () => {
                   <p className="text-muted-foreground">
                     Already have an account?{' '}
                     <Link to="/auth/login" className="text-primary hover:underline">
-                      Sign in
+                      Login
                     </Link>
                   </p>
                 </div>
