@@ -122,7 +122,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
         <MobileNavigation />
 
         {/* Content */}
-        <main className="flex-1 overflow-y-auto pb-12 md:pb-0">{children}</main>
+        <main className="flex-1 overflow-y-auto p-6 pb-12 md:pb-0">{children}</main>
       </div>
     </div>
   );
@@ -143,6 +143,10 @@ function AppContent() {
 
         {/* Portal routes - admin only */}
         <Route element={<AdminProtectedRoute />}>
+          <Route
+            path="/portal"
+            element={<Navigate to="/portal/dashboard" replace />}
+          />
           <Route path="/portal/dashboard" element={<PortalDashboard />} />
           <Route path="/portal/departments" element={<PortalDepartments />} />
           <Route path="/portal/job-titles" element={<PortalJobTitles />} />

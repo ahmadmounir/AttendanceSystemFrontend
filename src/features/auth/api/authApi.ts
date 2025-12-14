@@ -28,7 +28,12 @@ export async function login(credentials: LoginCredentials): Promise<ApiResponse<
       role: result.data.role,
       expiresAt: result.data.expiresAt,
     };
+    
+    // Store in Zustand (memory)
     useProfileStore.getState().setProfile(profile);
+    
+    // Store in localStorage for persistence across page reloads
+    localStorage.setItem('attendance-system-profile', JSON.stringify(profile));
   }
 
   return result;
@@ -36,6 +41,7 @@ export async function login(credentials: LoginCredentials): Promise<ApiResponse<
 
 export function logout(): void {
   localStorage.removeItem('attendance-system-token');
+  localStorage.removeItem('attendance-system-profile');
   
   // Clear profile from Zustand store
   useProfileStore.getState().clearProfile();

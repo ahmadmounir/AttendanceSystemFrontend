@@ -17,6 +17,59 @@ export function useBreadcrumbs() {
     return segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, ' ');
   };
 
+  // Build breadcrumb structure for portal pages (admin)
+  const buildPortalBreadcrumbs = (): Breadcrumb[] | null => {
+    if (pathSegments[0] !== 'portal') {
+      return null;
+    }
+
+    const breadcrumbs: Breadcrumb[] = [];
+
+    // For /portal or /portal/dashboard, show "Dashboard" text
+    if (pathSegments.length === 1 || (pathSegments.length === 2 && pathSegments[1] === 'dashboard')) {
+      breadcrumbs.push({
+        name: 'Dashboard',
+        href: '/portal/dashboard',
+        isLast: true,
+      });
+      return breadcrumbs;
+    }
+
+    // For other portal pages, show only the page name
+    if (pathSegments.length === 2) {
+      const page = pathSegments[1];
+      const pageNameKey = getPageNameFromLinksInfo('portal', page);
+      const pageName = pageNameKey ? pageNameKey : getTranslatedPageName(page);
+      
+      breadcrumbs.push({
+        name: pageName,
+        href: `/portal/${page}`,
+        isLast: true,
+      });
+    } else if (pathSegments.length === 3) {
+      // /portal/{section}/{page}
+      const section = pathSegments[1];
+      const page = pathSegments[2];
+
+      breadcrumbs.push({
+        name: getTranslatedPageName(section),
+        href: `/portal/${section}`,
+        isLast: false,
+      });
+
+      const pageNameKey = getPageNameFromLinksInfo('portal', page);
+      const pageName = pageNameKey ? pageNameKey : getTranslatedPageName(page);
+
+      breadcrumbs.push({
+        name: pageName,
+        href: `/portal/${section}/${page}`,
+        isLast: true,
+      });
+    }
+
+    return breadcrumbs;
+  };
+
   // Build breadcrumb structure for settings pages
   const buildSettingsBreadcrumbs = (): Breadcrumb[] | null => {
     if (pathSegments[0] !== 'settings') {
@@ -167,14 +220,7 @@ export function useBreadcrumbs() {
       });
 
       // Add sub-page (e.g., new, edit)
-      // Special handling for apps section 'new' and 'edit' actions
-      let subPageName: string;
-      if (section === 'apps' && (subPage === 'new' || subPage === 'edit')) {
-        subPageName = `apps:${subPage}`;
-      } else {
-        const subPageNameKey = getPageNameFromLinksInfo(section, page, subPage);
-        subPageName = subPageNameKey ? subPageNameKey : getTranslatedPageName(subPage);
-      }
+      const subPageName = getTranslatedPageName(subPage);
       
       breadcrumbs.push({
         name: subPageName,
@@ -241,10 +287,12 @@ export function useBreadcrumbs() {
     return breadcrumbs;
   };
 
+  const portalBreadcrumbs = buildPortalBreadcrumbs();
   const settingsBreadcrumbs = buildSettingsBreadcrumbs();
 
   return {
-    breadcrumbs: settingsBreadcrumbs || buildDefaultBreadcrumbs(),
+    breadcrumbs: portalBreadcrumbs || settingsBreadcrumbs || buildDefaultBreadcrumbs(),
     isSettingsPage: settingsBreadcrumbs !== null,
+    isPortalPage: portalBreadcrumbs !== null,
   };
 }

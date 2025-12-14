@@ -1,162 +1,134 @@
-import { Bell, Building, Building2, Contact, Home, LayoutGrid, Lock, Settings, User, Users } from "lucide-react";
+import { 
+  Bell, 
+  Home, 
+  Settings, 
+  User, 
+  Users,
+  ClipboardList,
+  Clock,
+  AlertTriangle,
+  CalendarDays,
+  Briefcase,
+  Building2
+} from "lucide-react";
 
-export const sidebarNavigationItems = [
+// Portal navigation items (Admin only)
+export const portalNavigationItems = [
   {
     name: "Dashboard",
-    nameKey: "common:dashboard",
-    href: "/",
+    href: "/portal/dashboard",
     icon: Home,
     exact: true,
+    requiresAdmin: true,
   },
   {
-    name: "Contacts",
-    nameKey: "common:contacts",
-    href: "/contacts",
-    icon: Contact,
+    name: "Departments",
+    href: "/portal/departments",
+    icon: Building2,
     exact: false,
+    requiresAdmin: true,
   },
   {
-    name: "Applications",
-    nameKey: "common:applications",
-    href: "/apps",
-    icon: LayoutGrid,
+    name: "Job Titles",
+    href: "/portal/job-titles",
+    icon: Briefcase,
     exact: false,
+    requiresAdmin: true,
+  },
+  {
+    name: "Employees",
+    href: "/portal/employees",
+    icon: Users,
+    exact: false,
+    requiresAdmin: true,
+  },
+  {
+    name: "Attendance Log",
+    href: "/portal/attendance-log",
+    icon: ClipboardList,
+    exact: false,
+    requiresAdmin: true,
+  },
+  {
+    name: "Leave Requests",
+    href: "/portal/leave-requests",
+    icon: CalendarDays,
+    exact: false,
+    requiresAdmin: true,
+  },
+  {
+    name: "Overtime Requests",
+    href: "/portal/overtime-requests",
+    icon: Clock,
+    exact: false,
+    requiresAdmin: true,
+  },
+  {
+    name: "Violations",
+    href: "/portal/violations",
+    icon: AlertTriangle,
+    exact: false,
+    requiresAdmin: true,
   },
   {
     name: "Settings",
-    nameKey: "common:settings",
-    href: "/settings", 
+    href: "/portal/settings",
     icon: Settings,
     exact: false,
+    requiresAdmin: true,
   },
-]
+];
 
-// Structure for settings navigation
-export const settingsConfig = {
-  title: 'Settings',
-  sections: [
-    {
-      title: 'My Account',
-      items: [
-        {
-          name: 'Profile',
-          nameKey: 'common:profile',
-          href: '/settings',
-          icon: User,
-          exact: true,
-        },
-        {
-          name: 'Workspaces',
-          nameKey: 'common:workspaces',
-          href: '/settings/workspaces',
-          icon: Building2,
-          exact: false,
-        },
-        {
-          name: 'Security',
-          nameKey: 'common:security',
-          href: '/settings/security',
-          icon: Lock,
-          exact: false,
-        },
-        {
-          name: 'Notifications',
-          nameKey: 'common:notifications',
-          href: '/settings/notifications',
-          icon: Bell,
-          exact: false,
-        },
-      ]
-    },
-    {
-      title: 'Workspace',
-      items: [
-        {
-          name: 'General',
-          nameKey: 'common:general',
-          href: '/settings/workspace',
-          icon: Building,
-          exact: false,
-        },
-        {
-          name: 'Members',
-          nameKey: 'common:members',
-          href: '/settings/workspace/members',
-          icon: Users,
-          exact: false,
-        },
-        {
-          name: 'Teams',
-          nameKey: 'common:teams',
-          href: '/settings/workspace/teams',
-          icon: Users,
-          exact: false,
-        },
-        {
-          name: 'Integrations',
-          nameKey: 'common:integrations',
-          href: '/settings/workspace/integrations',
-          icon: LayoutGrid,
-          exact: false,
-        },
-      ]
-    },
-    {
-      title: 'Contacts',
-      items: [
-        {
-          name: 'Groups',
-          nameKey: 'common:groups',
-          href: '/settings/contacts/groups',
-          icon: Users,
-          exact: false,
-        },
-      ]
-    }
-  ]
-};
+// Employee navigation items (Members)
+export const employeeNavigationItems = [
+  {
+    name: "Profile",
+    href: "/profile",
+    icon: User,
+    exact: true,
+    requiresAdmin: false,
+  },
+  {
+    name: "Settings",
+    href: "/settings",
+    icon: Settings,
+    exact: false,
+    requiresAdmin: false,
+  },
+  {
+    name: "Notifications",
+    href: "/notifications",
+    icon: Bell,
+    exact: false,
+    requiresAdmin: false,
+  },
+  {
+    name: "Leave Requests",
+    href: "/leave-requests",
+    icon: CalendarDays,
+    exact: false,
+    requiresAdmin: false,
+  },
+  {
+    name: "Overtime Requests",
+    href: "/overtime-requests",
+    icon: Clock,
+    exact: false,
+    requiresAdmin: false,
+  },
+  {
+    name: "Violations",
+    href: "/violations",
+    icon: AlertTriangle,
+    exact: false,
+    requiresAdmin: false,
+  },
+];
 
-// Contacts navigation configuration
-export const contactsConfig = {
-  title: 'Contacts',
-  items: [
-    {
-      name: 'All Contacts',
-      nameKey: 'contacts:pageTitle',
-      href: '/contacts',
-      icon: Contact,
-      exact: true,
-    },
-    {
-      name: 'Imports',
-      nameKey: 'contacts:imports',
-      href: '/contacts/imports',
-      icon: Contact,
-    },
-    {
-      name: 'Upload',
-      nameKey: 'import',
-      href: '/contacts/import',
-      icon: Contact,
-    },
-  ]
-};
+// Combined sidebar navigation (will be filtered based on role)
+export const sidebarNavigationItems = [
+  ...portalNavigationItems,
+  ...employeeNavigationItems,
+];
 
-// Apps navigation configuration
-export const appsConfig = {
-  title: 'Applications',
-  items: [
-    {
-      name: 'Chat Widgets',
-      nameKey: 'apps:chatWidgets.title',
-      href: '/apps/chat_widgets',
-      exact: false,
-    },
-    {
-      name: 'WhatsApp Web',
-      nameKey: 'apps:whatsappWeb.title',
-      href: '/apps/whatsapp_web',
-      exact: false,
-    },
-  ]
-};
+// Remove old settings/contacts/apps configs as they're not needed in this system

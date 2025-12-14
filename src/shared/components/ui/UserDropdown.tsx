@@ -1,11 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import React from "react";
-import { LogOut, Settings } from "lucide-react";
+import { LogOut } from "lucide-react";
 
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -16,6 +15,7 @@ import { logout } from "@/features/auth/api/authApi";
 import { useProfile } from "@/shared/stores/profileStore";
 import type { Profile } from "@/shared/types/api";
 import getInitials from "@/shared/utils/getInitials";
+import { ThemeSwitcher } from "../theme";
 
 // Get user data from profile
 function getUserData(profileData: Profile | null) {
@@ -97,15 +97,7 @@ export function UserDropdown({
         </DropdownMenuLabel>
 
         <DropdownMenuSeparator />
-
-        {/* Main Actions */}
-        <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => handleNavigation("/settings")}>
-            <Settings className={`h-4 w-4 me-2`} />
-            Settings
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-
+        <ThemeSwitcher size="sm" />
         <DropdownMenuSeparator />
 
         {/* Logout */}

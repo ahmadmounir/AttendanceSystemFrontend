@@ -3,25 +3,34 @@
  * 
  * Note: This project does not have a separate profile API endpoint.
  * Profile data is retrieved from the login response only.
- * This hook handles redirecting to login if no token exists.
+ * This hook handles redirecting to login if no token exists and
+ * restores profile from localStorage on page reload.
  */
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useProfile } from '@/shared/stores/profileStore';
+import { useProfile, useProfileStore } from '@/shared/stores/profileStore';
 
 /**
  * Hook to check authentication status on app mount
  * - Redirects to login if no token exists
+ * - Restores profile from localStorage if token exists
  * - Profile is populated during login, not fetched separately
  */
 export function useProfileHydration() {
   const profile = useProfile();
   const navigate = useNavigate();
   const location = useLocation();
+  const hasHydrated = useRef(false);
+  const { setProfile } = useProfileStore();
 
   useEffect(() => {
     // Skip auth check on login page
     if (location.pathname === '/login') {
+      return;
+    }
+
+    // Only run once
+    if (hasHydrated.current) {
       return;
     }
 
@@ -30,16 +39,36 @@ export function useProfileHydration() {
     // If no token, redirect to login
     if (!token) {
       navigate('/login', { replace: true });
+      hasHydrated.current = true;
       return;
     }
     
-    // If token exists but no profile, user needs to login again
-    // (profile is only set during login in this system)
+    // If token exists but no profile in memory, try to restore from localStorage
     if (!profile) {
-      localStorage.removeItem('attendance-system-token');
-      navigate('/login', { replace: true });
+      const storedProfile = localStorage.getItem('attendance-system-profile');
+      
+      if (storedProfile) {
+        try {
+          const parsedProfile = JSON.parse(storedProfile);
+          setProfile(parsedProfile);
+          hasHydrated.current = true;
+        } catch {
+          // Invalid profile data, clear everything and redirect
+          localStorage.removeItem('attendance-system-token');
+          localStorage.removeItem('attendance-system-profile');
+          navigate('/login', { replace: true });
+          hasHydrated.current = true;
+        }
+      } else {
+        // No stored profile, clear token and redirect
+        localStorage.removeItem('attendance-system-token');
+        navigate('/login', { replace: true });
+        hasHydrated.current = true;
+      }
+    } else {
+      hasHydrated.current = true;
     }
-  }, [navigate, profile, location.pathname]);
+  }, [navigate, profile, location.pathname, setProfile]);
 
   return { profile };
 }

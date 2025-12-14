@@ -27,7 +27,7 @@ export * from './Tabs';
 export * from './Textarea';
 export * from './Tooltip';
 export * from './AccessDenied';
-export * from './TeamMembersDisplay';
 export * from './UserDropdown';
+export * from './PageHeader';
 export { default as PasswordStrength } from './PasswordStrength';
 export * from './DataError';

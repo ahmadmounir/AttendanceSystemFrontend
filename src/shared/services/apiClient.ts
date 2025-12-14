@@ -25,7 +25,8 @@ export const handleResponse = async <T>(response: Response): Promise<ApiResponse
   // Handle 401 unauthorized by redirecting to login
   if (statusCode === 401) {
     // Clear token if exists
-    localStorage.removeItem('attendance-systemtoken');
+    localStorage.removeItem('attendance-system-token');
+    localStorage.removeItem('attendance-system-profile');
     
     // Clear profile from Zustand store
     useProfileStore.getState().clearProfile();
