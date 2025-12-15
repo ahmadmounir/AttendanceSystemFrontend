@@ -137,9 +137,18 @@ const AttendanceLog = () => {
     });
   };
 
-  // Get attended employee IDs (to filter in modal)
+  // Get attended employee IDs for TODAY only (to filter in modal)
   const attendedEmployeeIds = useMemo(() => {
-    return logs.map((log) => log.employeeId);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Start of today
+
+    return logs
+      .filter((log) => {
+        const clockInDate = new Date(log.clockInTime);
+        clockInDate.setHours(0, 0, 0, 0); // Start of clock in day
+        return clockInDate.getTime() === today.getTime(); // Same day
+      })
+      .map((log) => log.employeeId);
   }, [logs]);
 
   // Memoize table rows

@@ -9,3 +9,5 @@ export { EditJobTitleModal } from './jobTitles/EditJobTitleModal';
 export { AddEmployeeModal } from './AddEmployeeModal';
 export { EditEmployeeModal } from './EditEmployeeModal';
 export { AttendEmployeeModal } from './AttendEmployeeModal';
+export { LeaveRequestDetailsModal } from './LeaveRequestDetailsModal';
+export { OvertimeRequestDetailsModal } from './OvertimeRequestDetailsModal';

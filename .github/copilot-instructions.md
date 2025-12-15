@@ -41,7 +41,6 @@ src/features/{feature}/
 - **Attendance Log** (`/portal/attendance-log`) - View all attendance records
 - **Leave Requests** (`/portal/leave-requests`) - Manage all leave requests
 - **Overtime Requests** (`/portal/overtime-requests`) - Manage all overtime requests
-- **Violations** (`/portal/violations`) - View and manage all violations
 - **Settings** (`/portal/settings`) - System settings
 
 ### Member Pages (Employees - `/`)
@@ -50,7 +49,6 @@ src/features/{feature}/
 - **Notifications** (`/notifications`) - Alerts from admin (can mark as read)
 - **Leave Requests** (`/leave-requests`) - User's own leave requests (can add new)
 - **Overtime Requests** (`/overtime-requests`) - User's own overtime requests (can add new)
-- **Violations** (`/violations`) - Read-only view of user's violations
 
 ### State Management Rules
 - **Profile Data**: ONLY in Zustand (`src/shared/stores/profileStore.ts`)

@@ -55,7 +55,7 @@ export function StaticSidebar() {
       {/* Navigation */}
       <nav className="flex-1 py-4">
         <TooltipProvider delayDuration={0}>
-          <div className="space-y-2 px-3">
+          <div className="space-y-2 px-2">
             {navigationItems.map((item) => {
               // Get all paths for conflict detection
               const allPaths = navigationItems.map((navItem) => navItem.href);

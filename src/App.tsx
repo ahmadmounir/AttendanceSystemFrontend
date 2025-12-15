@@ -38,27 +38,14 @@ const PortalLeaveRequests = lazy(
 const PortalOvertimeRequests = lazy(
   () => import("@/features/portal/pages/OvertimeRequests")
 );
-const PortalViolations = lazy(
-  () => import("@/features/portal/pages/Violations")
-);
-const PortalSettings = lazy(() => import("@/features/portal/pages/Settings"));
 
 // Lazy load employee pages
 const EmployeeProfile = lazy(() => import("@/features/employee/pages/Profile"));
-const EmployeeSettings = lazy(
-  () => import("@/features/employee/pages/Settings")
-);
-const EmployeeNotifications = lazy(
-  () => import("@/features/employee/pages/Notifications")
-);
 const EmployeeLeaveRequests = lazy(
   () => import("@/features/employee/pages/LeaveRequests")
 );
 const EmployeeOvertimeRequests = lazy(
   () => import("@/features/employee/pages/OvertimeRequests")
-);
-const EmployeeViolations = lazy(
-  () => import("@/features/employee/pages/Violations")
 );
 
 // Add this script to set theme on initial page load
@@ -163,21 +150,16 @@ function AppContent() {
             path="/portal/overtime-requests"
             element={<PortalOvertimeRequests />}
           />
-          <Route path="/portal/violations" element={<PortalViolations />} />
-          <Route path="/portal/settings" element={<PortalSettings />} />
         </Route>
 
         {/* Employee routes - protected */}
         <Route element={<ProtectedRoute />}>
           <Route path="/profile" element={<EmployeeProfile />} />
-          <Route path="/settings" element={<EmployeeSettings />} />
-          <Route path="/notifications" element={<EmployeeNotifications />} />
           <Route path="/leave-requests" element={<EmployeeLeaveRequests />} />
           <Route
             path="/overtime-requests"
             element={<EmployeeOvertimeRequests />}
           />
-          <Route path="/violations" element={<EmployeeViolations />} />
         </Route>
 
         {/* Redirect root to profile */}

@@ -23,6 +23,7 @@ export async function login(credentials: LoginCredentials): Promise<ApiResponse<
     
     // Store profile from login response
     const profile: Profile = {
+      employeeId: result.data.employeeId,
       username: result.data.username,
       name: result.data.name,
       role: result.data.role,

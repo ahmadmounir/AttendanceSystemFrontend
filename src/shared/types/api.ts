@@ -29,10 +29,12 @@ export interface Profile {
   name: string;
   role: UserRole; // 'admin' or 'member'
   expiresAt: string;
+  employeeId: string; // Employee ID for member-specific operations
 }
 
 // Login response
 export interface LoginResponse {
+  employeeId: string;
   accessToken: string;
   username: string;
   name: string;

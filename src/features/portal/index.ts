@@ -9,7 +9,6 @@
  * - Attendance Log
  * - Leave Requests
  * - Overtime Requests
- * - Violations
  * - Settings
  */
 

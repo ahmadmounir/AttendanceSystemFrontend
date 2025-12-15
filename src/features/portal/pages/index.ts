@@ -9,5 +9,3 @@ export { default as Employees } from './Employees';
 export { default as AttendanceLog } from './AttendanceLog';
 export { default as LeaveRequests } from './LeaveRequests';
 export { default as OvertimeRequests } from './OvertimeRequests';
-export { default as Violations } from './Violations';
-export { default as Settings } from './Settings';

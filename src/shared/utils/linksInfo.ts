@@ -1,12 +1,9 @@
 import { 
-  Bell, 
-  Home, 
-  Settings, 
+  Home,  
   User, 
   Users,
   ClipboardList,
   Clock,
-  AlertTriangle,
   CalendarDays,
   Briefcase,
   Building2
@@ -62,21 +59,7 @@ export const portalNavigationItems = [
     icon: Clock,
     exact: false,
     requiresAdmin: true,
-  },
-  {
-    name: "Violations",
-    href: "/portal/violations",
-    icon: AlertTriangle,
-    exact: false,
-    requiresAdmin: true,
-  },
-  {
-    name: "Settings",
-    href: "/portal/settings",
-    icon: Settings,
-    exact: false,
-    requiresAdmin: true,
-  },
+  }
 ];
 
 // Employee navigation items (Members)
@@ -86,20 +69,6 @@ export const employeeNavigationItems = [
     href: "/profile",
     icon: User,
     exact: true,
-    requiresAdmin: false,
-  },
-  {
-    name: "Settings",
-    href: "/settings",
-    icon: Settings,
-    exact: false,
-    requiresAdmin: false,
-  },
-  {
-    name: "Notifications",
-    href: "/notifications",
-    icon: Bell,
-    exact: false,
     requiresAdmin: false,
   },
   {
@@ -115,14 +84,7 @@ export const employeeNavigationItems = [
     icon: Clock,
     exact: false,
     requiresAdmin: false,
-  },
-  {
-    name: "Violations",
-    href: "/violations",
-    icon: AlertTriangle,
-    exact: false,
-    requiresAdmin: false,
-  },
+  }
 ];
 
 // Combined sidebar navigation (will be filtered based on role)
