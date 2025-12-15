@@ -41,6 +41,9 @@ const PortalOvertimeRequests = lazy(
 
 // Lazy load employee pages
 const EmployeeProfile = lazy(() => import("@/features/employee/pages/Profile"));
+const EmployeeNotifications = lazy(
+  () => import("@/features/employee/pages/Notifications")
+);
 const EmployeeLeaveRequests = lazy(
   () => import("@/features/employee/pages/LeaveRequests")
 );
@@ -109,7 +112,9 @@ function AppLayout({ children }: { children: React.ReactNode }) {
         <MobileNavigation />
 
         {/* Content */}
-        <main className="flex-1 overflow-y-auto p-6 pb-12 md:pb-0">{children}</main>
+        <main className="flex-1 overflow-y-auto p-6 pb-12 md:pb-0">
+          {children}
+        </main>
       </div>
     </div>
   );
@@ -155,6 +160,7 @@ function AppContent() {
         {/* Employee routes - protected */}
         <Route element={<ProtectedRoute />}>
           <Route path="/profile" element={<EmployeeProfile />} />
+          <Route path="/notifications" element={<EmployeeNotifications />} />
           <Route path="/leave-requests" element={<EmployeeLeaveRequests />} />
           <Route
             path="/overtime-requests"

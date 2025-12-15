@@ -24,14 +24,25 @@ import {
   PageHeader,
   Skeleton,
 } from "@/shared/components";
-import { Users, MoreVertical, Trash2, User, Pencil } from "lucide-react";
+import {
+  Users,
+  MoreVertical,
+  Trash2,
+  User,
+  Pencil,
+  MessageSquare,
+} from "lucide-react";
 import { showToast } from "@/shared/components/ui/toast-config";
 import { useEffect, useState, useMemo } from "react";
 import type { Employee } from "../api/employeesApi";
 import { getEmployees, deleteEmployee } from "../api/employeesApi";
 import { getDepartments, type Department } from "../api/departmentsApi";
-import { AddEmployeeModal, EditEmployeeModal } from "../components";
-import { useProfile,  } from "@/shared/stores/profileStore";
+import {
+  AddEmployeeModal,
+  EditEmployeeModal,
+  SendNotificationModal,
+} from "../components";
+import { useProfile } from "@/shared/stores/profileStore";
 
 const Employees = () => {
   const profile = useProfile();
@@ -45,6 +56,11 @@ const Employees = () => {
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(
     null
   );
+
+  // Notification modal state
+  const [notificationModalOpen, setNotificationModalOpen] = useState(false);
+  const [notificationEmployee, setNotificationEmployee] =
+    useState<Employee | null>(null);
 
   // Confirmation dialog states
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
@@ -132,6 +148,11 @@ const Employees = () => {
       setEditModalOpen(true);
     };
 
+    const handleSendMessage = (employee: Employee) => {
+      setNotificationEmployee(employee);
+      setNotificationModalOpen(true);
+    };
+
     const handleDelete = (id: string) => {
       showConfirmDialog(
         "Delete Employee",
@@ -195,6 +216,10 @@ const Employees = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => handleSendMessage(employee)}>
+                  <MessageSquare className="me-2 h-4 w-4" />
+                  Send Message
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => handleEdit(employee)}>
                   <Pencil className="me-2 h-4 w-4" />
                   Edit
@@ -214,7 +239,7 @@ const Employees = () => {
         </TableCell>
       </TableRow>
     ));
-  }, [employees, departments]);
+  }, [employees, departments, profile?.username]);
 
   if (loading) {
     return <Loader text="Loading employees..." />;
@@ -338,6 +363,16 @@ const Employees = () => {
           open={editModalOpen}
           onOpenChange={setEditModalOpen}
           onEmployeeUpdated={handleEmployeeUpdated}
+        />
+      )}
+
+      {/* Send Notification Modal */}
+      {notificationEmployee && (
+        <SendNotificationModal
+          employeeId={notificationEmployee.id}
+          employeeName={`${notificationEmployee.firstName} ${notificationEmployee.lastName}`}
+          open={notificationModalOpen}
+          onOpenChange={setNotificationModalOpen}
         />
       )}
 

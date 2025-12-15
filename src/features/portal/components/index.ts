@@ -11,3 +11,4 @@ export { EditEmployeeModal } from './EditEmployeeModal';
 export { AttendEmployeeModal } from './AttendEmployeeModal';
 export { LeaveRequestDetailsModal } from './LeaveRequestDetailsModal';
 export { OvertimeRequestDetailsModal } from './OvertimeRequestDetailsModal';
+export { SendNotificationModal } from './SendNotificationModal';

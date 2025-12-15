@@ -6,7 +6,8 @@ import {
   Clock,
   CalendarDays,
   Briefcase,
-  Building2
+  Building2,
+  Bell
 } from "lucide-react";
 
 // Portal navigation items (Admin only)
@@ -69,6 +70,13 @@ export const employeeNavigationItems = [
     href: "/profile",
     icon: User,
     exact: true,
+    requiresAdmin: false,
+  },
+  {
+    name: "Notifications",
+    href: "/notifications",
+    icon: Bell,
+    exact: false,
     requiresAdmin: false,
   },
   {
