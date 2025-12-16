@@ -110,6 +110,19 @@ export function AddLeaveRequestModal({
       return;
     }
 
+    // Check if start date is before today
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const selectedStartDate = new Date(values.startDate);
+    selectedStartDate.setHours(0, 0, 0, 0);
+    
+    if (selectedStartDate < today) {
+      form.setError("startDate", {
+        message: "Start date cannot be in the past",
+      });
+      return;
+    }
+
     // Check if end date is after start date
     if (new Date(values.endDate) < new Date(values.startDate)) {
       form.setError("endDate", {
@@ -225,7 +238,12 @@ export function AddLeaveRequestModal({
                     <FormControl>
                       <div className="relative">
                         <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-                        <Input type="date" className="ps-10" {...field} />
+                        <Input 
+                          type="date" 
+                          className="ps-10" 
+                          min={new Date().toISOString().split('T')[0]}
+                          {...field} 
+                        />
                       </div>
                     </FormControl>
                     <FormMessage />

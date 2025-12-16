@@ -62,6 +62,20 @@ export function AddOvertimeRequestModal({
       form.setError("requestDate", { message: "Request date is required" });
       return;
     }
+    
+    // Check if request date is before today
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const selectedDate = new Date(values.requestDate);
+    selectedDate.setHours(0, 0, 0, 0);
+    
+    if (selectedDate < today) {
+      form.setError("requestDate", {
+        message: "Request date cannot be in the past",
+      });
+      return;
+    }
+    
     if (!values.hours || values.hours <= 0) {
       form.setError("hours", { message: "Hours must be greater than 0" });
       return;
@@ -145,7 +159,12 @@ export function AddOvertimeRequestModal({
                   <FormControl>
                     <div className="relative">
                       <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-                      <Input type="date" className="ps-10" {...field} />
+                      <Input 
+                        type="date" 
+                        className="ps-10" 
+                        min={new Date().toISOString().split('T')[0]}
+                        {...field} 
+                      />
                     </div>
                   </FormControl>
                   <FormMessage />
